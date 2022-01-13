@@ -1,0 +1,686 @@
+﻿$.txt_OK = '';
+$.txt_Cancel = '';
+
+
+$(document).ready(function () {
+    $.txt_OK = GetStringData('OK', '확인');
+    $.txt_Cancel = GetStringData('Cancel', '취소');
+    getAlarmInfo();
+})
+
+var GetStringData = function (text, defaultValue) {
+    var result = '';
+    $.ajax({
+        url: '/StringResource/GetStringData',
+        method: "POST",
+        data: { text: text },
+        async: false,
+        success: function (data) {
+            result = data;
+        }
+    });
+
+    if (result == '') {
+        result = defaultValue;
+    }
+
+    return result;
+}
+
+var commonModalHandler = function (message, url, id) {
+    if (message.substring(0, 3) != "<h2") {
+        message = '<h2>' + message + '</h2>'
+    }
+
+    if (id == undefined) {
+        id = 'modal-info';
+    }
+
+    var commonModal = new lui.utils.Modal({
+        id: id,
+        isShowModal: true,
+        isShowClose: true,
+        content: message,
+        button: [
+            {
+                type: 'button', text: $.txt_OK, className: 'lui-modal__confirm', onClick: function () {
+                    commonModal.hide();
+                    if (url != undefined) {
+                        location.href = url;
+                    }
+                }
+            }
+        ],
+        cbHideCompleted: function () {
+            commonModal.remove();
+        }
+    });
+}
+
+var commonModalHandlerToALink = function (message, url, buttonText, target) {
+    if (message.substring(0, 3) != "<h2") {
+        message = '<h2>' + message + '</h2>'
+    }
+
+    if (buttonText == undefined) {
+        buttonText = $.txt_OK;
+    }
+
+    target = typeof target !== 'undefined' ? target : null;
+
+    var commonModal = new lui.utils.Modal({
+        id: 'modal-info',
+        isShowModal: true,
+        isShowClose: true,
+        content: message,
+        button: [
+            { type: 'a', href: url, text: buttonText, className: 'lui-modal__link', target: target }
+        ],
+        cbHideCompleted: function () {
+            commonModal.remove();
+        }
+    });
+}
+
+var commonModalHandlerToCallback = function (message, callback, id) {
+    if (message.substring(0, 3) != "<h2") {
+        message = '<h2>' + message + '</h2>'
+    }
+
+    if (id == undefined) {
+        id = 'modal-info';
+    }
+
+    var commonModal = new lui.utils.Modal({
+        id: id,
+        isShowModal: true,
+        isShowClose: true,
+        content: message,
+        button: [
+            {
+                type: 'button', text: 'OK', className: 'lui-modal__confirm', onClick: function () {
+                    commonModal.hide();
+                    callback();
+                }
+            }
+        ],
+        cbHideCompleted: function () {
+            commonModal.remove();
+
+        }
+    });
+}
+
+var commonModalHandlerToFilter = function (message, editor) {
+    if (message.substring(0, 3) != "<h2") {
+        message = '<h2>' + message + '</h2>'
+    }
+
+    var startIdx = message.indexOf('[');
+    var lastIdx = message.indexOf(']');
+    var wordList = message.substring(startIdx + 1, lastIdx);
+    var words = new Array();
+    words = wordList.split(',');
+
+
+    var commonModal = new lui.utils.Modal({
+        id: 'modal-info',
+        isShowModal: true,
+        isShowClose: true,
+        content: message,
+        button: [
+            {
+                type: 'button', text: 'OK', className: 'lui-modal__confirm', onClick: function () {
+                    commonModal.hide();
+                }
+            }
+        ],
+        cbInit: function () {
+            /* 금칙어 하이라이팅 */
+            lui.board.filter.check({
+                el: editor,
+                words: words
+            });
+        },
+        cbHideCompleted: function () {
+            commonModal.remove();
+        }
+    });
+}
+
+var commonModalHandlerConfirm = function (message, callback) {
+    if (message.substring(0, 3) != "<h2") {
+        message = '<h2>' + message + '</h2>'
+    }
+
+    var commonModal = new lui.utils.Modal({
+        id: 'modal-info',
+        isShowModal: true,
+        isShowClose: true,
+        content: message,
+        button: [
+            {
+                type: 'button', text: $.txt_OK, className: 'lui-modal__confirm', onClick: function () {
+                    commonModal.hide();
+                    if (callback)
+                        callback();
+                }
+            },
+            {
+                type: 'button', text: $.txt_Cancel, className: 'lui-modal__cancel', onClick: function () {
+                    commonModal.hide();
+                }
+            }
+        ],
+        cbHideCompleted: function () {
+            commonModal.remove();
+        }
+    });
+}
+
+var commonModalHandler = function (message, url, id) {
+    if (message.substring(0, 3) != "<h2") {
+        message = '<h2>' + message + '</h2>'
+    }
+
+    if (id == undefined) {
+        id = 'modal-info';
+    }
+
+    var commonModal = new lui.utils.Modal({
+        id: id,
+        isShowModal: true,
+        isShowClose: true,
+        content: message,
+        button: [
+            {
+                type: 'button', text: $.txt_OK, className: 'lui-modal__confirm', onClick: function () {
+                    commonModal.hide();
+                    if (url != undefined) {
+                        location.href = url;
+                    }
+                }
+            }
+        ],
+        cbHideCompleted: function () {
+            commonModal.remove();
+        }
+    });
+}
+
+var getAlarmInfo = function () {
+
+    if ($(".button--header-expand-alarm").length > 0) {
+        $.ajax({
+            url: '/Mypage/GetAlarmNewCheck',
+            type: "post",
+        }).done(function (response, textStatus, jqXHR) {
+
+            if (response.code) {
+                $(".button--header-expand-alarm").html("알림<span class=\"icon icon--alarm\">새 알림</span>")
+            }
+            else {
+                $(".button--header-expand-alarm").html("알림")
+            }
+
+            return;
+        })
+            .fail(function (xhr, status, error) {
+                ajaxErrorHandler(xhr, status, error);
+            });
+    }
+}
+
+var headerAlarmReload = function () {
+    var alarm = $('.lostark-wrapper .header-alarm')
+
+    $.ajax({
+        url: '/Mypage/GetAlarmExpandList',
+        method: "GET",
+        dataType: 'html',
+        success: function (data) {
+            alarm.html(data);
+        }
+    });
+}
+
+/* 알림 확인 버튼 */
+var alarmLinkClick = function (seqNo) {
+
+    $.ajax({
+        url: '/Mypage/SetAlarmUpdate',
+        method: "POST",
+        data: {
+            seqNo: seqNo,
+            viewType: 1
+        },
+        dataType: 'JSON',
+        success: function (data) {
+            if (!jsonResultCommonCheck(data)) {
+                return;
+            }
+
+            if (data.code == 0) {
+                headerAlarmReload();
+            } else {
+                commonModalHandler('알림 메시지 삭제에 실패하였습니다.');
+            }
+
+            return;
+        },
+        error: function (xhr, status, error) {
+            ajaxErrorHandler(xhr, status, error);
+            return;
+        }
+    });
+};
+
+var myinfoCashReload = function () {
+    $.ajax({
+        url: '/Cash/GetCashInfo',
+        type: 'POST',
+        dataType: 'json',
+        success: function (data) {
+            if (data.code == -10000) {
+                $('.header-myinfo__cash #cash').html("점검 중");
+                $('.header-myinfo__cash #cashLink').html("<button class=\"button button--header-refresh\" onclick=\"myinfoCashReload();\">조회</button>");
+            }
+            else {
+                $('.header-myinfo__cash #cash').html(data.royalCrystal);
+                $('.header-myinfo__cash #cashLink').html("<a href=\"/Cash/Charge\" class=\"button button--header-cash\">충전</a>");
+            }
+
+            return;
+        },
+        error: function (xhr, status, error) {
+            $('.header-myinfo__cash #cash').html("점검 중");
+            $('.header-myinfo__cash #cashLink').html("<button class=\"button button--header-refresh\" onclick=\"myinfoCashReload();\">조회</button>");
+            return;
+        }
+    });
+}
+
+var myinfoCouponCountReload = function () {
+    $.ajax({
+        url: '/Coupon/GetCouponCount',
+        type: 'POST',
+        dataType: 'json',
+        success: function (data) {
+            if (data.code == -10000) {
+                $('.header-myinfo__coupon #couponCount').html("점검 중");
+                $('.header-myinfo__coupon #couponLink').html("<button class=\"button button--header-refresh\" onclick=\"myinfoCouponCountReload();\">조회</button>");
+            }
+            else {
+                $('.header-myinfo__coupon #couponCount').html(data);
+                $('.header-myinfo__coupon #couponLink').html("<a href=\"/Coupon/Available\" class=\"button button--header-coupon\">등록</a>");
+            }
+            return;
+        },
+        error: function (xhr, status, error) {
+            $('.header-myinfo__coupon #couponCount').html("점검 중");
+            $('.header-myinfo__coupon #couponLink').html("<button class=\"button button--header-refresh\" onclick=\"myinfoCouponCountReload();\">조회</button>");
+            return;
+        }
+    });
+}
+
+/* 네비게이션 - 내 정보 레이어 */
+$(document).on('click', '.lostark-wrapper .button--header-expand-myinfo', function (e) {
+    var button = $(this),
+        myinfo = $('.lostark-wrapper .header-myinfo'),
+        activeClass = 'header-myinfo--show';
+
+    if (!modalCommonCheck()) {
+        return;
+    }
+
+    var _show = function () {
+        var loader;
+
+        $.ajax({
+            url: '/Mypage/GetExpandMyinfo',
+            method: "GET",
+            dataType: 'html',
+            beforeSend: function (xhr) {
+                loader = new lui.utils.Loader();
+            },
+            success: function (data) {
+                myinfo.html(data);
+                button.attr('aria-expanded', 'true');
+                myinfo.addClass(activeClass);
+
+                //$(document).on('click.header-myinfo', function (e) {
+                //    if ($(e.target).is(myinfo) || $(e.target).closest(myinfo).length) return;
+                //    _hide();
+                //});
+
+                $(document).on('click.header-myinfo', function (e) {
+                    if ($(e.target).is(myinfo) || $(e.target).closest(myinfo).length) return;
+                    _hide();
+                });
+
+                $(document).on('keydown.header-myinfo', function (e) {
+                    if (e.keyCode == 27 && !$('.lui-modal.lui-modal--show').length) _hide();
+                });
+
+                myinfoCashReload();
+                myinfoCouponCountReload();
+            },
+            error: function (xhr, status, error) {
+                commonModalHandler('요청 중 오류가 발생하였습니다.', location.href);
+                return;
+            },
+            complete: function () {
+                loader.remove(); // 로더 제거
+            }
+        });
+    }
+    var _hide = function () {
+        button.attr('aria-expanded', 'false');
+        myinfo.removeClass(activeClass);
+        $(document).off('click.header-myinfo keydown.header-myinfo');
+    }
+
+    if (!myinfo.hasClass(activeClass)) _show();
+    else _hide();
+
+    e.preventDefault();
+});
+
+/* 네비게이션 - 대표캐릭터 설정 */
+$(document).on('click', '.lostark-wrapper .button--header-character-list', function (e) {
+    var button = $(this),
+        characterList = $('.lostark-wrapper .header .character-list'),
+        activeClass = 'character-list--show';
+
+    var _show = function () {
+        button.attr('aria-expanded', 'true');
+        characterList.addClass(activeClass);
+
+        $(document).on('click.character-list', function (e) {
+            if ($(e.target).is(characterList.find('button'))) {
+                var worldNo = $(e.target).attr('data-WorldNo');
+                var pcId = $(e.target).attr('data-PcId');
+                var pcName = $(e.target).attr('data-PcName');
+
+                $.ajax({
+                    url: '/Mypage/SetRepresentCharacter',
+                    method: "POST",
+                    data: {
+                        worldNo: worldNo,
+                        pcId: pcId,
+                        pcName: pcName
+                    },
+                    async: false,
+                    success: function (data) {
+                        if (!jsonResultCommonCheck(data)) {
+                            return;
+                        }
+
+                        if (data.code == 0) {
+                            commonModalHandlerToCallback(data.message, function () { location.reload(); })
+                            return;
+                        }
+                        else {
+                            commonModalHandler(data.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        ajaxErrorHandler(xhr, status, error);
+                        return;
+                    }
+                });
+            }
+
+            _hide();
+        });
+
+        $(document).on('keydown.character-list', function (e) {
+            if (e.keyCode == 27 && !$('.lui-modal.lui-modal--show').length) _hide();
+        });
+    }
+    var _hide = function () {
+        button.attr('aria-expanded', 'false');
+        characterList.removeClass(activeClass);
+        $(document).off('click.character-list keydown.character-list');
+    }
+
+    if (!characterList.hasClass(activeClass)) _show();
+    else _hide();
+
+    e.preventDefault();
+});
+
+/* 공통 - 캐릭터 정보 조회 (2차) */
+$(document).on('click', '.lostark-wrapper .button--user-info', function (e) { // 유저 정보 버튼 클릭시 리스트 노출
+    var isCharacter = false;
+    var isActivity = false;
+    var encryptMemberNo = '';
+    var memberNo = $(this).attr('data-memberNo');
+    var nickName = $(this).attr('data-nickName');
+    var _this = $(this),
+        userinfo = _this.closest('.user-info');
+
+    $.ajax({
+        url: "/board/IsCharacterList",
+        method: "POST",
+        data: { memberNo: memberNo },
+        async: false,
+        success: function (data) {
+            isCharacter = data.isCharacter;
+            encryptMemberNo = data.encryptMemberNo;
+        },
+        error: function (xhr, status, error) {
+            ajaxErrorHandler(xhr, status, error);
+            return;
+        }
+    });
+
+    $.ajax({
+        url: "/board/IsActivity",
+        method: "POST",
+        data: { memberNo: memberNo },
+        async: false,
+        success: function (data) {
+            isActivity = data.isActivity;
+        },
+        error: function (xhr, status, error) {
+            ajaxErrorHandler(xhr, status, error);
+            return;
+        }
+    });
+
+    var html = '';
+    html += '<span class="user-buttons">';
+    html += '<button type="button" class="button button--user-profile" aria-haspopup="true" aria-expanded="false" data-memberNo=\"' + memberNo + '\" data-nickName=\"' + nickName + '\" >프로필</button>';
+
+    if (isCharacter) {
+        html += '<button type="button" class="button button--user-battle" data-url="/Profile/Member?id=' + encodeURIComponent(encryptMemberNo) + '" >전투정보실</button>';
+    }
+    else {
+        html += '<button type="button" class="button button--user-battle"  disabled >전투정보실</button>';
+    }
+
+    if (isActivity) {
+        html += '<button type="button" class="button button--user-library" data-url="/Library/Tip/UserList?page=1&searchtype=4&searchtext=' + encodeURIComponent(nickName) + '&ordertype=1&userPageType=1">베른대도서관 활동</button>';
+    }
+    else {
+        html += '<button type="button" class="button button--user-library" disabled >베른대도서관 활동</button>';
+    }
+
+    html += '</span>';
+
+    if (!userinfo.find('.user-buttons').length) userinfo.append(html);
+
+    userinfo.toggleClass('user-info--active');
+
+    e.preventDefault();
+});
+
+$(document).on('mousedown.user-buttons keydown.user-buttons', function (e) { // 빈 영역 클릭, ESC 숨김 처리
+    if (e.type === 'mousedown') {
+        if ($(e.target).closest('.user-info').length) $('.user-info').not($(e.target).closest('.user-info')).removeClass('user-info--active');
+        else $('.user-info').removeClass('user-info--active');
+    } else if (e.type === 'keydown' && e.keyCode === 27) {
+        $('.user-info').removeClass('user-info--active');
+    }
+});
+
+$(document).on('click', '.lostark-wrapper .button--user-profile', function (e) { // 유저 정보 리스트 - 프로필 보기
+    var memberNo = $(this).attr('data-memberNo');
+    var nickName = $(this).attr('data-nickName');
+    var button = $(this),
+        loader;
+
+    $.ajax({
+        url: '/Board/GetExpandInfo',
+        method: "GET",
+        data: { memberNo: memberNo, nickName: nickName },
+        beforeSend: function (xhr) {
+            loader = new lui.utils.Loader();
+            button.prop('disabled', true);
+        }
+    }).done(function (data, textStatus, jqXHR) {
+        var modal = new lui.utils.Modal({
+            id: 'modal-profile',
+            isShowModal: true,
+            isShowClose: true,
+            content: data,
+            cbShow: function (e) {
+                /* Profile UI */
+                lui.layout.modalProfile(e.target);
+            },
+            cbHideCompleted: function () {
+                modal.remove();
+            }
+        });
+    })
+        .fail(ajaxErrorHandler)
+        .always(function () {
+            loader.remove();
+            button.prop('disabled', false);
+        });
+
+    $('.user-info').removeClass('user-info--active');
+    e.preventDefault();
+});
+
+// 유저 정보 리스트 - 전투정보실, 베른대도서관 가상 링크 (window.open 보안 경고 우회)
+$(document).on('click', '.lostark-wrapper .button--user-battle, .lostark-wrapper .button--user-library', function (e) {
+    if (!document.getElementById('lostark-virtual-link')) {
+        var el = document.createElement('a');
+        el.setAttribute('id', 'lostark-virtual-link');
+        el.setAttribute('href', '#');
+        el.setAttribute('target', '_blank');
+        el.setAttribute('style', 'position:absolute;right:0;bottom:0;width:0px;height:0px;font-size:0px;');
+        document.body.appendChild(el);
+    }
+    $('#lostark-virtual-link').attr('href', $(this).data('url')).get(0).click();
+
+    $('.user-info').removeClass('user-info--active');
+    e.preventDefault();
+});
+
+/* 네비게이션 - 알림 */
+$(document).on('click', '.lostark-wrapper .button--header-expand-alarm', function (e) {
+    var button = $(this),
+        alarm = $('.lostark-wrapper .header-alarm'),
+        activeClass = 'header-alarm--show';
+
+    var _show = function () {
+        $.ajax({
+            url: '/Mypage/GetAlarmExpandList',
+            method: "GET",
+            dataType: 'html',
+            success: function (data) {
+                alarm.html(data);
+                button.attr('aria-expanded', 'true');
+                alarm.addClass(activeClass);
+
+                $(document).on('click.header-alarm', function (e) {
+                    if ($(e.target).is(alarm) || $(e.target).closest(alarm).length || $(e.target).closest('.lui-modal').length) return;
+                    _hide();
+                });
+
+                $(document).on('keydown.header-alarm', function (e) {
+                    if (e.keyCode == 27 && !$('.lui-modal.lui-modal--show').length) _hide();
+                });
+            },
+            error: function (xhr, status, error) {
+                ajaxErrorHandler(xhr, status, error);
+                return;
+            }
+        });
+    }
+
+    var _hide = function () {
+        button.attr('aria-expanded', 'false');
+        alarm.removeClass(activeClass);
+        $(document).off('click.header-alarm keydown.header-alarm');
+    }
+
+    if (!alarm.hasClass(activeClass)) _show();
+    else _hide();
+
+    e.preventDefault();
+});
+
+/* 네비게이션 - 알림 삭제 버튼 */
+$(document).on('click', '.lostark-wrapper .button--header-alarm-delete', function (e) {
+    var alarm = $('.lostark-wrapper .header-alarm')
+    var seqNo = $(this).attr("data-seqNo");
+
+    $.ajax({
+        url: '/Mypage/SetAlarmUpdate',
+        method: "POST",
+        data: { seqNo: seqNo },
+        dataType: 'JSON',
+        success: function (data) {
+            if (!jsonResultCommonCheck(data)) {
+                return;
+            }
+
+            if (data.code == 0) {
+                headerAlarmReload();
+
+            } else {
+                commonModalHandler('알림 메시지 삭제에 실패하였습니다.');
+            }
+
+            return;
+        },
+        error: function (xhr, status, error) {
+            ajaxErrorHandler(xhr, status, error);
+            return;
+        }
+    });
+
+    e.preventDefault();
+});
+
+//로얄크리스탈 충전 클릭 시
+var newRoyalCrystalCashCargeWindow;
+var royalCrystalCashCharge = function (dns, gameNo, totalPriceId, mycash, _callBack) {
+    trackingCode('2_Cash');
+
+    if (totalPriceId == null) {
+        newRoyalCrystalCashCargeWindow = window.open('//pay' + dns + '/payment/' + gameNo, 'fillup', 'width=560px, height=720px, scrollbars=1');
+    }
+    else {
+        var totalPrice = parseInt($("#" + totalPriceId).text().replace(/,/g, ""));
+        if (parseInt(totalPrice) <= parseInt(mycash)) {
+            newRoyalCrystalCashCargeWindow = window.open('//pay' + dns + '/payment/' + gameNo, 'fillup', 'width=560px, height=720px, scrollbars=1');
+        } else {
+            newRoyalCrystalCashCargeWindow = window.open('//pay' + dns + '/payment/' + gameNo + '?reqamt=' + (parseInt(totalPrice) - parseInt(mycash)), 'fillup', 'width=560px, height=720px, scrollbars=1');
+        }
+    }
+
+    if (_callBack != undefined) { //충전창 닫히면 callBack함수 호출
+        var timer = setInterval(function () {
+            if (newRoyalCrystalCashCargeWindow.closed) {
+                clearInterval(timer);
+                _callBack();
+            }
+        }, 1000);
+    }
+}

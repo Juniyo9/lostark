@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로스트아크</title>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <link rel="shortcut icon" href="images/i15318309403.png">
+    <link rel="stylesheet" href="CSS/main.css">
+    <link rel="stylesheet" href="CSS/common.css">
+    <style>
+        body {
+            background-image: url(images/백그라운드.jpg);
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        .gameStart img{
+            background-size: 10% 10%;
+        }
+        .visual {
+            margin-left: 450px;
+            position: relative;
+            width: 1570px;
+            height: 550px;
+        }
+        .slider_panel {
+            width: 4000px;
+            position: relative;
+        }
+        .slider_image {
+            width: 800px;
+            height: 500px;
+            float: left;
+        }
+        .control_panel {
+            position: absolute;
+            top: 470px;
+            left: 370px;
+            height: 13px;
+            overflow: hidden;
+        }
+        .control_button {
+            position: relative;
+            cursor: pointer;
+            background: url('images/point_button.png');
+            width: 12px;
+            height: 46px;
+            float: left;
+        }
+        .control_button:hover { 
+            top:-16px;
+        }
+        .control_button.active {
+            top: -31px;
+        }
+        .left_right_control_panel > .left_control {
+            position: absolute;
+            top: 230px;
+            left: 0px;
+            cursor: pointer;
+        }
+        .left_right_control_panel > .right_control {
+            position: absolute;
+            top: 230px;
+            right: 0px;
+            cursor: pointer;
+        }
+        .left_right_control_panel_2 > .left_control_2 {
+            position: absolute;
+            top: 230px;
+            left: 0px;
+            cursor: pointer;
+        }
+        .left_right_control_panel_2 > .right_control_2 {
+            position: absolute;
+            top: 230px;
+            right: 0px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        $(document).ready(function() {
+            var index=0;
+            moveSlider(index);
+            moveSlider2(index);
+            $('.control_button').click(function(){
+                index=$(this).index();
+                moveSlider(index);
+              });
+              $('.left_control').click(function(){
+                 if(index<=0){
+                     alert('처음 이미지입니다.');
+                 }else {
+                     index--;
+                     moveSlider(index);
+                 }                 
+              });
+              $('.right_control').click(function(){
+                 if(index>=4){
+                     alert('마지막 이미지입니다,')
+                 }else {
+                     index++;
+                     moveSlider(index);
+                 } 
+              });
+            //이미지 슬라이드구현
+              function moveSlider(index) {
+                $('.slider_panel').animate ({
+                    left:-(index*800)
+                },'slow');
+                $('.control_button').removeClass('active');
+                $('.control_button').eq(index).addClass('active');
+                $('.slider_text').hide();
+                $('.slider_text').eq(index).fadeIn('slow');
+            }
+
+                // 1번슬라이드 끝
+
+              $('.left_control_2').click(function(){
+                 if(index<=0){
+                     alert('처음 이미지입니다.');
+                 }else {
+                     index--;
+                     moveSlider2(index);
+                 }                 
+              });
+              $('.right_control_2').click(function(){
+                 if(index>=2){
+                     alert('마지막 이미지입니다,')
+                 }else {
+                     index++;
+                     moveSlider2(index);
+                 } 
+              });
+            //이미지 슬라이드구현
+              function moveSlider2(index) {
+                $('.trst_panel').animate ({
+                    left:-(index*330)
+                },'slow');
+            }
+        });
+     </script>
+</head>
+<body>
+    <!-- 헤더 영역 시작 -->
+    <header>
+        <nav>
+            <h1 class="logo">
+                <a href="index.html"><img src="images/i8208158577.png" alt=""></a>
+            </h1>
+            <div>
+                <span class="login"><a href="login.html">LOGIN</a></span>
+                <span class="gameStart"><a href="#"><img src="images/start.jpg" alt=""></a></span>
+            </div>
+            <ul class="mainMenu">
+                <li><a href="#">새소식</a>
+                    <ul class="news">
+                        <li><a href="#">공지사항</a></li>
+                        <li><a href="#">업데이트</a></li>
+                        <li><a href="#">이벤트</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">게임정보</a>
+                    <ul class="gameInfo">
+                        <li><a href="#">세계관</a></li>
+                        <li><a href="#">클래스</a></li>
+                        <li><a href="#">컨텐츠</a></li>
+                        <li><a href="#">월드맵</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">커뮤니티</a>
+                    <ul class="community">
+                        <li><a href="#">자유 게시판</a></li>
+                        <li><a href="#">직업 게시판</a></li>
+                        <li><a href="#">Q&A</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">거래소</a>
+                    <ul class="exchange">
+                        <li><a href="#">거래소</a></li>
+                        <li><a href="#">경매장</a></li>
+                        <li><a href="#">웹 샵</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">미디어</a>
+                    <ul class="media">
+                        <li><a href="#">공모전</a></li>
+                        <li><a href="#">OST</a></li>
+                        <li><a href="#">Art Work</a></li>
+                        <li><a href="#">상영관</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">고객센터</a>
+                    <ul class="fnq">
+                        <li><a href="#">F&Q</a></li>
+                        <li><a href="#">신고센터</a></li>
+                        <li><a href="#">보안 서비스</a></li>
+                        <li><a href="#">자료실</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <!-- 헤더 영역 종료 -->
+        <!--비주얼 영역 시작-->
+        <div class="visual">
+            <div class="slideVisual">
+                <div class="slider_panel">
+                    <img class="slider_image" src="images/비쥬얼1.jpg" alt=""/>
+                    <img class="slider_image" src="images/비쥬얼2.jpg" alt=""/>
+                    <img class="slider_image" src="images/비쥬얼3.jpg" alt=""/>
+                    <img class="slider_image" src="images/비쥬얼4.jpg" alt=""/>
+                    <img class="slider_image" src="images/비쥬얼5.jpg" alt=""/>
+                </div>
+                <div class="control_panel">
+                    <div class="control_button"></div>
+                    <div class="control_button"></div>
+                    <div class="control_button"></div>
+                    <div class="control_button"></div>
+                    <div class="control_button"></div>
+                </div>
+                <div class="left_right_control_panel">
+                    <img class="left_control" src="images/arrow_pre.png" alt=""/>
+                    <img class="right_control" src="images/arrow_next.png" alt=""/>
+                </div>
+            </div>
+            <div id="linkArea">
+                    <section class="bgNews">
+                        <h2>공지사항</h2></br>
+                            <a href="#">
+                                <p><a href="#">12월 1일(수) 로스트아크 임시점검 완료</a></p>
+                                <p><a href="#">12월 1일(수) 로스트아크 임시점검 안내</a></p>
+                                <p><a href="#">12월 1일(수) 업데이트 내역안내</a></p>
+                                <p><a href="#">12월 1일(수) 신규상품 및 확률안내</a></p>
+                            </a>
+                    </section>
+                </div>
+            <div class="trst">
+                <h1>Trailer & Sound Track</h1></br>
+                  <div class="trst_panel">
+                     <a href="#">
+                           <img class="trst_image" src="images/mqdefault(3).jpg" alt=""/>
+                           <img class="trst_image" src="images/mqdefault(5).jpg" alt=""/>
+                           <img class="trst_image" src="images/mqdefault(7).jpg" alt=""/>
+                     </a>
+                         <div class="left_right_control_panel_2">
+                              <img class="left_control_2" src="images/SImage_Left.gif" alt=""/>
+                              <img class="right_control_2" src="images/SImage_Right.gif" alt=""/>
+                         </div>
+                 </div>
+            </div>
+        </div>
+        <!--비주얼 영역 종료-->
+        <!--컨텐츠 영역 시작-->
+  <div id="infoArea">
+      <section class="search">
+          <form action="serach/jsp" method="get" id="searchForm" name="searchForm">
+              <fieldset class="battleInfo">
+                  <label for="keyword">전투정보실</label>
+                      <input type="search" id="keyword" name="keyword" placeholder="캐릭터명을 입력하세요" required/>
+                      <button type="submit">검색</button>
+              </fieldset>
+          </form>
+          <form action="serach/jsp" method="get" id="searchForm" name="searchForm">
+              <fieldset class="gameGuide">
+                  <label for="keyword">게임 가이드</label>
+                      <input type="search" id="keyword" name="keyword" placeholder="검색어를 입력해주세요" required/>
+                      <button type="submit">검색</button>
+              </fieldset>
+          </form>
+      </section>
+   </div>
+   <div class="icons">
+      <div class="icon">
+          <a href="#">
+             <img src="images/거래소.png" hspace="30" alt="icon1"/>
+             <p>구매해야 할 아이템이 있다면?</p>
+             <h2>거래소</h2>
+          </a>
+      </div>
+      <div class="icon">
+          <a href="#">
+             <img src="images/경매장.png" hspace="30" alt="icon1"/>
+             <p>더 다양한 물품들을 만나보세요!</p>
+             <h2>경매장</h2>
+          </a>
+      </div>
+      <div class="icon">
+          <a href="#">
+             <img src="images/상점.png" hspace="30" alt="icon1"/>
+             <p>'성장'과 '전투/생활'추천 상품 입고!</p>
+             <h2>상점</h2>
+          </a>
+    </div>
+</div>
+        <!--컨텐츠 영역 종료-->
+        <!-- 푸터 영역 시작 -->
+    <footer id="footer">
+        <div id="footerInner">
+            <div class="footerLogo">
+                <a href="https://www.smilegate.com" class="footerLogo1"><img src="images/푸터1.png" alt=""/></a>
+                <a href="https://www.smilegate.com/ko/SERVICE/STOVE.asp" class="footerLogo2"><img src="images/푸터2.png" alt=""/></a>
+            </div>
+            <section class="guide">
+                <ul>
+                   <li><a href="#">회사소개</a></li>
+                   <li><a href="#">이용약관</a></li>
+                   <li><a href="#"><span>개인정보 처리방침</span></a></li>
+                   <li><a href="#">운영정책</a></li>
+                   <li><a href="#">청소년보호정책</a></li>
+                   <li><a href="#">고객센터</a></li>
+                   <li><a href="#">제휴문의</a></li>
+                </ul>
+            </section>
+                <address>
+                    <span>회사명.㈜스마일게이트 알피지 대표이사.지원길</span></br>
+                    <span>제2017-성남분당-0904호</span>
+                    <span>· F. 031-627-0400</span>
+                    <span>· E. <a href="mailto:lostark@smilegate.com">lostark@smilegate.com</a></span>
+                </address>
+                <p class="copyright">&copy; Smilegate Stove All rights reserved.</p>
+                
+        </div>
+    </footer>
+        <!-- 푸터 영역 종료 -->
+</body>
+</html>

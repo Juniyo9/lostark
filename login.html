@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로스트아크</title>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <link rel="shortcut icon" href="images/i15318309403.png">
+    <link rel="stylesheet" href="CSS/common.css">
+    <style>
+        .gameStart img{
+            background-size: 10% 10%;
+        }
+        body {
+            background-image: url(images/백그라운드.jpg);
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 영역 시작 -->
+    <header>
+        <nav>
+            <h1 class="logo">
+                <a href="index.html"><img src="images/i8208158577.png" alt=""></a>
+            </h1>
+            <div>
+                <span class="login"><a href="login.html">LOGIN</a></span>
+                <span class="gameStart"><a href="#"><img src="images/start.jpg" alt=""></a></span>
+            </div>
+            <ul class="mainMenu">
+                <li><a href="#">새소식</a>
+                    <ul class="news">
+                        <li><a href="#">공지사항</a></li>
+                        <li><a href="#">업데이트</a></li>
+                        <li><a href="#">이벤트</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">게임정보</a>
+                    <ul class="gameInfo">
+                        <li><a href="#">세계관</a></li>
+                        <li><a href="#">클래스</a></li>
+                        <li><a href="#">컨텐츠</a></li>
+                        <li><a href="#">월드맵</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">커뮤니티</a>
+                    <ul class="community">
+                        <li><a href="#">자유 게시판</a></li>
+                        <li><a href="#">직업 게시판</a></li>
+                        <li><a href="#">Q&A</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">거래소</a>
+                    <ul class="exchange">
+                        <li><a href="#">거래소</a></li>
+                        <li><a href="#">경매장</a></li>
+                        <li><a href="#">웹 샵</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">미디어</a>
+                    <ul class="media">
+                        <li><a href="#">공모전</a></li>
+                        <li><a href="#">OST</a></li>
+                        <li><a href="#">Art Work</a></li>
+                        <li><a href="#">상영관</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">고객센터</a>
+                    <ul class="fnq">
+                        <li><a href="#">F&Q</a></li>
+                        <li><a href="#">신고센터</a></li>
+                        <li><a href="#">보안 서비스</a></li>
+                        <li><a href="#">자료실</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+    <!-- 헤더 영역 종료 -->
+
+    <form name="loginFrm" method="post" action="loginProc.jsp">
+        <table style="margin:auto">
+            <tr>
+                <th colspan="2" style="font-size: 40px; padding: 20px; color: white;">로그인</th>
+            </tr>
+            <tr>
+                <td>아이디</td>
+                <td><input name="id" required ></td>
+            </tr>
+            <tr>
+                <td>비밀번호</td>
+                <td><input name="pwd" type="password" required></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: right;">
+                    <button>로그인</button>&nbsp;&nbsp;
+                    <button type="button" onclick="location.href='member.html'"><a href="member.html">회원가입</a></button>
+                </td>
+            </tr>
+        </table>
+    </form>
+
+        <!-- 푸터 영역 시작 -->
+    <footer id="footer" style="margin-top: 450px;">
+        <div id="footerInner">
+            <div class="footerLogo">
+                <a href="https://www.smilegate.com" class="footerLogo1"><img src="images/푸터1.png" alt=""/></a>
+                <a href="https://www.smilegate.com/ko/SERVICE/STOVE.asp" class="footerLogo2"><img src="images/푸터2.png" alt=""/></a>
+            </div>
+            <section class="guide">
+                <ul>
+                   <li><a href="#">회사소개</a></li>
+                   <li><a href="#">이용약관</a></li>
+                   <li><a href="#"><span>개인정보 처리방침</span></a></li>
+                   <li><a href="#">운영정책</a></li>
+                   <li><a href="#">청소년보호정책</a></li>
+                   <li><a href="#">고객센터</a></li>
+                   <li><a href="#">제휴문의</a></li>
+                </ul>
+            </section>
+                <address>
+                    <span>회사명.㈜스마일게이트 알피지 대표이사.지원길</span></br>
+                    <span>제2017-성남분당-0904호</span>
+                    <span>· F. 031-627-0400</span>
+                    <span>· E. <a href="mailto:lostark@smilegate.com">lostark@smilegate.com</a></span>
+                </address>
+                <p class="copyright">&copy; Smilegate Stove All rights reserved.</p>
+                
+        </div>
+    </footer>
+        <!-- 푸터 영역 종료 -->
+</body>
+</html>

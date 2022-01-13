@@ -1,0 +1,46 @@
+﻿$.getJSON(_DM_STOVE_STATIC + '/static-common/version.json', function (data) {
+	var versionCpheader = data.library["cp-header"];
+	var url = _DM_STOVE_STATIC + '/sh-' + versionCpheader + '/cp-header.js';
+
+	if (versionCpheader.substring(0, 1) == 4) {
+		$.getScript(url)
+			.done(function (script, textStatus) {
+				var cpHeader = new window.cp.Header({
+					wrapper: '.stove-wrapper',
+					logArea: 'cp',
+					biLogoAlign: 'center',
+					headerMenu: {
+						notification: false,
+						clientDownload: false
+					},
+					userMenu: {
+						coupon: false
+					},
+					loginMethod: {
+						redirectCurrentPage: true
+					}
+				});
+				cpHeader.render();
+			})
+	} else if (versionCpheader.substring(0, 1) == 5) {
+		$.getScript(url)
+			.done(function (script, textStatus) {
+				var cpHeader = new window.cp.Header({
+					wrapper: '.stove-wrapper',
+					logArea: 'cp',
+					widget: {
+						notification: false,
+						clientDownload: false
+					},
+					userMenu: {
+						coupon: false
+					},
+					loginMethod: {
+						redirectCurrentPage: true
+					}
+				});
+				cpHeader.render();
+			})
+	}
+})
+

@@ -1,0 +1,104 @@
+﻿$(document).on('click', '.lostark-wrapper .button--event-quiz', function (e) {
+    if (!modalCommonCheck()) {
+        return;
+    }
+
+    var keyword = $('#quiz').val().trim();
+
+    /* 검색어 두글자 이하 */
+    if (keyword.length < 2) {
+        var modalQuiz = new lui.utils.Modal({
+            id: 'modal-quiz',
+            isShowModal: true,
+            isShowClose: true,
+            title: 'Quiz Event!',
+            content: '<h2>돌아온 도전! 로.잘.알 퀴즈 정답은<br><strong>두 글자 이상</strong> 입력해 주세요!</h2>',
+            button: [
+                {
+                    type: 'button', text: '확인', className: 'item__confirm', onClick: function () {
+                        modalQuiz.hide();
+                    }
+                }
+            ],
+            cbHideCompleted: function (e) {
+                modalQuiz.remove();
+            }
+        });
+        return false;
+    }
+
+    $.ajax({
+        url: '/Promotion/Invite/SetExchange211218',
+        method: "POST",
+        data: { text: keyword },
+        dataType: 'json',
+        async: false,
+        success: function (data) {
+            if (data.code == 0) {
+                var modalQuiz = new lui.utils.Modal({
+                    id: 'modal-quiz',
+                    isShowModal: true,
+                    isShowClose: true,
+                    title: 'Quiz Event!',
+                    content: '<h2>로.잘.알 이시군요!<br><strong>정답 입니다!</strong></h2><div class="quiz_item"><span class="item' + data.message + '">' + data.description +'</span></div><p class="item_txt">이벤트에 참가하신 계정의<br>게임 내 > 상품함으로 지급 됩니다.</p>',
+                    button: [
+                        {
+                            type: 'button', text: '확인', className: 'item__confirm', onClick: function () {
+                                modalQuiz.hide();
+                            }
+                        }
+                    ],
+                    cbHideCompleted: function (e) {
+                        modalQuiz.remove();
+                    }
+                });
+
+                $('#quiz_' + data.message).addClass('complete');
+                $('#quiz').val('');
+            }
+            else if (data.code == -1) {
+                var modalQuiz = new lui.utils.Modal({
+                    id: 'modal-quiz',
+                    isShowModal: true,
+                    isShowClose: true,
+                    title: 'Quiz Event!',
+                    content: data.message,
+                    button: [
+                        {
+                            type: 'button', text: '확인', className: 'item__confirm', onClick: function () {
+                                modalQuiz.hide();
+                            }
+                        }
+                    ],
+                    cbHideCompleted: function (e) {
+                        modalQuiz.remove();
+                    }
+                });
+            } else {
+                var modalQuiz = new lui.utils.Modal({
+                    id: 'modal-quiz',
+                    isShowModal: true,
+                    isShowClose: true,
+                    title: 'Quiz Event!',
+                    content: '<h2><strong>아쉽게도 정답이 아닙니다.</strong><br>다시 로.잘.알에 도전해 주세요.</h2>',
+                    button: [
+                        {
+                            type: 'button', text: '확인', className: 'item__confirm', onClick: function () {
+                                modalQuiz.hide();
+                            }
+                        }
+                    ],
+                    cbHideCompleted: function (e) {
+                        modalQuiz.remove();
+                    }
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+            ajaxErrorHandler(xhr, status, error);
+            check = false;
+        }
+    });
+
+    e.preventDefault();
+});

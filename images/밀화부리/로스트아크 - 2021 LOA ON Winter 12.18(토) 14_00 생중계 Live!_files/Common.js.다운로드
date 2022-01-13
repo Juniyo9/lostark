@@ -1,0 +1,391 @@
+﻿$.ajaxSetup({ cache: false })
+
+var setCookie = function (name, value, days) {
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        var expires = "; expires=" + date.toGMTString();
+    } else {
+        var expires = "";
+    }
+
+    document.cookie = name + '=' + value + expires + ";";
+}
+
+var getCookie = function (name) {
+    var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+
+    return value ? value[2] : null;
+}
+
+var onlyNumber = function() {
+    if (event.keyCode < 45 || event.keyCode > 57) {
+        event.returnValue = false;
+    }
+
+    if (event.keyCode == 8 || event.keyCode == 46 || event.keyCode == 37 || event.keyCode == 39) {
+        event.returnValue = false;
+    }
+    else {
+        event.target.value = event.target.value.replace(/[^0-9]/g, "");
+    }
+
+}
+
+var jsonResultCommonCheck = function (data, isLoginRedirect) {
+    if (typeof data === 'string') {
+        var json = {
+            value: {}
+        };
+
+        if (IsJsonString(data, json)) {
+            data = json.value;
+        }
+        else { //Json이 아니면 True
+            return true;
+        }
+    }
+
+    if (data.code == -1000) {
+        if (isLoginRedirect) {
+            location.href = data.url;
+        } else {
+            commonModalHandler(data.message, data.url);
+        }
+        return false;
+    } else if (data.code == -1001 || data.code == -1002 || data.code == -1005 || data.code == -10000) {
+        commonModalHandler(data.message, data.url);
+        return false;
+    } else if (data.code == -9999 || data.code == 3001 || data.code == -1003 || data.code == -1004 || data.code == -10001) {
+        commonModalHandler(data.message);
+        return false;
+    }
+    else if (data.code == 3000) {
+        commonModalHandlerToALink(data.message, data.url, '서비스 이용 해지 철회');
+        return false;
+    }
+    else if (data.code == -2222) {
+        commonModalHandler(data.message);
+        if ($('#modal-password').length > 0) {
+            $('#modal-password').remove();
+        }
+        
+        return false;
+    }
+
+    return true;
+}
+
+var modalCommonCheck = function (isLevelCheck, promotionNo) {
+    var check = false;
+    $.ajax({
+        url: '/Member/LoginCheck',
+        method: "POST",
+        data: { isLevelCheck: isLevelCheck, no: promotionNo },
+        dataType: 'json',
+        async: false,
+        success: function (data) {
+            check = jsonResultCommonCheck(data);
+        },
+        error: function (xhr, status, error) {
+            ajaxErrorHandler(xhr, status, error);
+            check = false;
+        }
+    });
+
+    return check;
+}
+
+var actionResultCommonCheck = function (url, isLoginRedirect) {
+    $.ajax({
+        url: '/Member/LoginCheck',
+        method: "POST",
+        dataType: 'json',
+        success: function (data) {
+            if (!jsonResultCommonCheck(data, isLoginRedirect)) {
+                return;
+            }
+
+            if (!(url == undefined || url == '')) {
+                location.href = url;
+            }
+        },
+        error: function (xhr, status, error) {
+            ajaxErrorHandler(xhr, status, error);
+            return;
+        }
+    });
+}
+
+/* AJAX Error (공통) */
+var ajaxErrorHandler = function (jqXHR, textStatus, errorThrown) {
+    commonModalHandler('요청 중 오류가 발생하였습니다.');
+}
+
+var setCookie = function (cname, value, expire) {
+    var expireDate = new Date();
+    expireDate.setDate(expireDate.getDate() + expire);
+    document.cookie = cname + "=" + encodeURI(value) + "; expires=" + expireDate.toGMTString() + "; path=/;";
+};
+
+var commonWindowOpen = function (url, title, width, height, top, left) {
+
+    if (top == undefined) {
+        top = (screen.availHeight - height) / 2;
+    }
+
+    if (left == undefined) {
+        left = (screen.availWidth - width) / 2;
+    }
+
+    var openOption;
+    openOption = 'height=' + height + ',width=' + width + ',menubar=no,toolbar=no,location=no,status=no,scrollbars=yes,top=' + top + ',left=' + left;
+
+    window.open(url, title, openOption);
+}
+
+var removeTag = function (html) {
+    return html.replace(/(<([^>]+)>)/gi, "");
+}
+
+/* 댓글 수정 (댓글) */
+$(document).on('click', '.lostark-wrapper .button--comment-modify', function (e) {
+    $(this).attr('aria-expanded', 'true').closest('li').addClass('comment__item--modify');
+    e.preventDefault();
+});
+/* 댓글 수정 취소 (댓글) */
+$(document).on('click', '.lostark-wrapper .button--comment-modify-cancel', function (e) {
+    $(this).closest('li').removeClass('comment__item--modify').find('.button--comment-modify').attr('aria-expanded', 'false');
+    e.preventDefault();
+});
+
+var stoveLogin = function () {
+    location.href = _DM_STOVE_LOGIN.replace(/&amp;/g, "&") + location.href;
+};
+
+var trackingCode = function (id) {
+    try {
+        gtag('event', 'general', {
+            'event_category': 'general',
+            'event_label': id
+        });
+
+        if (id === '1_GameStartClick') {
+            gtag('event', 'conversion', {
+                'send_to': 'AW-690687476/h-xyCPOC38MBEPSbrMkC'
+            });
+        } else if (id === '2_Cash') {
+            gtag('event', 'conversion', {
+                'send_to': 'AW-690687476/cO4dCKbD6MMBEPSbrMkC'
+            });
+        } else if (id === 'Event_LevelUp') {
+            gtag('event', 'conversion', {
+                'send_to': 'AW-690687476/xOCeCJ2G38MBEPSbrMkC'
+            });
+        } else if (id === 'Event_Avatar_Complete') {
+            gtag('event', 'conversion', {
+                'send_to': 'AW-690687476/nWrACJKyz8MBEPSbrMkC'
+            });
+        } else if (id === '3_Register') {
+            gtag('event', 'conversion', {
+                'send_to': 'AW-690687476/Gh2JCNXx7dIBEPSbrMkC'
+            });
+        }
+
+        fbq('track', id);
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+var setDexie = function (db, id, topCount) {
+	var db = new Dexie(db)
+	db.version(1).stores({
+		recentlySawItem: '++id, title, timestamp'
+	});
+
+	var title = id;
+	var dateTime = new Date();
+
+	db.recentlySawItem
+	.toArray()
+	.then(function (data) {
+		var existsDataList = $.grep(data, function (n, i) {
+			return n.title == title
+		})
+
+		existsDataList = existsDataList.sort(function (a, b) { return b.timestamp - a.timestamp });
+
+		var existsDataInfo = existsDataList[0];
+		if (existsDataInfo == null) {
+			db.recentlySawItem.add({
+				title: title,
+				timestamp: dateTime
+			})
+		}
+		else {
+			db.recentlySawItem.put({
+				id: existsDataInfo.id,
+				title: title,
+				timestamp: dateTime
+			})
+		}
+
+		var list = data.sort(function (a, b) { return b.timestamp - a.timestamp });
+		for (var i = 0; i < list.length; i++) {
+			if (i > topCount) {
+				db.recentlySawItem.delete(list[i].id);
+			}
+		}
+	});
+}
+
+var getDexie = function (db, limitCount, callback) {
+	var db = new Dexie(db)
+	var html = '';
+
+	db.version(1).stores({
+		recentlySawItem: '++id, title, timestamp'
+	});
+	db.recentlySawItem
+		.limit(limitCount)
+		.reverse()
+		.sortBy('timestamp')
+		.then(function (data) {
+			if (typeof callback == 'function')
+				callback(data);
+		});
+}
+
+/*Firebase 알림 */
+var _messaging;
+var _firebaseLoad = false;
+
+$.getScript("https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js", function () {
+    var firebaseConfig = {
+        apiKey: "AIzaSyAcu_Ld4LFJfRt_dLNIZ5VVgCtYBHT1Wkk",
+        authDomain: "servicedev2.firebaseapp.com",
+        databaseURL: "https://servicedev2.firebaseio.com",
+        projectId: "servicedev2",
+        storageBucket: "servicedev2.appspot.com",
+        messagingSenderId: "386110779185",
+        appId: "1:386110779185:web:b9392fd460fa7ff8ab8a10",
+        measurementId: "G-G0CS5TF6JL"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    $.getScript("https://www.gstatic.com/firebasejs/8.6.8/firebase-messaging.js", function () {
+        if (firebase.messaging.isSupported()) {
+            _messaging = firebase.messaging();
+
+            _firebaseLoad = true;
+            if (firebase.messaging.isSupported()) {
+                navigator.serviceWorker
+                    .register('/firebase-messaging-sw.js')
+                    .then(function (registration) {
+
+                        console.log("Firebase Service Worker Registered");
+
+                        _messaging.useServiceWorker(registration);
+                        _messaging.onMessage(function (payload) {
+                            if (!document.hidden) {
+                                var options = {
+                                    body: payload.data.body,
+                                    icon: payload.data.icon
+                                };
+                                var notification = new Notification(payload.data.title, options);
+                                notification.onclick = function () {
+                                    window.open(payload.data.link);
+                                };
+                            }
+                        });
+
+                    });
+            }
+        }
+    }) 
+ })
+
+var getFirebaseUserToken = function (callbackFunc, parameter) {
+    if (_messaging != null) {
+        if (_firebaseLoad == false) {
+            var count = 1;
+            if (count < 5) {
+                setTimeout(function () {
+                    count = count + 1;
+                    getFirebaseUserToken(callbackFunc, parameter);
+                }, 100)
+            }
+        }
+
+        if (Notification.permission === 'granted') {
+            _messaging.getToken()
+                .then(function (token) {
+                    if (callbackFunc) {
+                        callbackFunc(token, parameter);
+                    }
+                }).catch(function (err) {
+                    if (callbackFunc) {
+                        parameter.errorcode = -1;
+                        parameter.errormsg = err;
+                        callbackFunc("", parameter);
+                    }
+                    console.log(err);
+                });
+
+        }
+        else if (Notification.permission === 'default' || Notification.permission === 'denied') {
+            Notification.requestPermission().then(function (permission) {
+                if (permission === 'granted') {
+                    _messaging.getToken()
+                        .then(function (token) {
+                            if (callbackFunc) {
+                                callbackFunc(token, parameter);
+                            }
+                        }).catch(function (err) {
+                            if (callbackFunc) {
+                                parameter.errorcode = -2;
+                                parameter.errormsg = err;
+                                callbackFunc("", parameter);
+                            }
+                            console.log(err);
+                        });
+                }
+                else {
+                    if (callbackFunc) {
+                        parameter.errorcode = -3;
+                        parameter.errormsg = "firebase permission cancel";
+                        callbackFunc("", parameter);
+                    }
+                    console.log("firebase permission cancel");
+                }
+            })
+        }
+        else {
+            if (callbackFunc) {
+                parameter.errorcode = -4;
+                parameter.errormsg = "firebase permission denied";
+                callbackFunc("", parameter);
+            }
+            console.log("firebase permission denied");
+        }
+    }
+}
+/*Firebase 알림 */
+
+//JsonCheck
+function IsJsonString(str, json) {
+    try {
+        json.value = JSON.parse(str);
+        return (typeof json.value === 'object');
+    } catch (e) {
+        return false;
+    }
+}
+
+//MaxLength Input 체크
+function maxLengthCheck(object) {
+    if (object.value.length > object.maxLength) {
+        object.value = object.value.slice(0, object.maxLength);
+    }
+}
